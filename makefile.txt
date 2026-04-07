@@ -1,0 +1,128 @@
+# Makefile for AWESOME-PHISHING-BOT v5.5.0
+
+.PHONY: help install run stop clean docker-build docker-up docker-down test backup restore
+
+# Colors
+GREEN := \033[0;32m
+RED := \033[0;31m
+YELLOW := \033[1;33m
+NC := \033[0m
+
+help:
+	@echo "$(GREEN)AWESOME-PHISHING-BOT v5.5.0 - Makefile Commands$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Installation:$(NC)"
+	@echo "  make install     - Full installation"
+	@echo "  make setup       - Setup virtual environment"
+	@echo "  make deps        - Install dependencies"
+	@echo ""
+	@echo "$(YELLOW)Running:$(NC)"
+	@echo "  make run         - Run the bot"
+	@echo "  make start       - Start with systemd"
+	@echo "  make stop        - Stop the bot"
+	@echo "  make status      - Check bot status"
+	@echo ""
+	@echo "$(YELLOW)Docker:$(NC)"
+	@echo "  make docker-build - Build Docker image"
+	@echo "  make docker-up   - Start Docker containers"
+	@echo "  make docker-down - Stop Docker containers"
+	@echo "  make docker-logs - View Docker logs"
+	@echo ""
+	@echo "$(YELLOW)Maintenance:$(NC)"
+	@echo "  make backup      - Backup data"
+	@echo "  make restore     - Restore from backup"
+	@echo "  make clean       - Clean temporary files"
+	@echo "  make test        - Run tests"
+
+install:
+	@echo "$(GREEN)→ Running installation script...$(NC)"
+	@chmod +x install.sh
+	@./install.sh
+
+setup:
+	@echo "$(GREEN)→ Setting up virtual environment...$(NC)"
+	@python3 -m venv venv
+	@source venv/bin/activate && pip install --upgrade pip
+
+deps:
+	@echo "$(GREEN)→ Installing dependencies...$(NC)"
+	@source venv/bin/activate && pip install -r requirements.txt
+
+run:
+	@echo "$(GREEN)→ Starting Awesome Phishing Bot...$(NC)"
+	@source venv/bin/activate && python3 awesome-phishing-bot.py
+
+start:
+	@echo "$(GREEN)→ Starting systemd service...$(NC)"
+	@sudo systemctl start awesome-phishing-bot
+	@sudo systemctl status awesome-phishing-bot --no-pager
+
+stop:
+	@echo "$(YELLOW)→ Stopping bot...$(NC)"
+	@sudo systemctl stop awesome-phishing-bot || pkill -f "awesome-phishing-bot.py"
+	@echo "$(GREEN)✓ Bot stopped$(NC)"
+
+status:
+	@sudo systemctl status awesome-phishing-bot --no-pager || pgrep -f "awesome-phishing-bot.py" && echo "$(GREEN)Running$(NC)" || echo "$(RED)Not running$(NC)"
+
+docker-build:
+	@echo "$(GREEN)→ Building Docker image...$(NC)"
+	@docker build -t awesome-phishing-bot:latest .
+
+docker-up:
+	@echo "$(GREEN)→ Starting Docker containers...$(NC)"
+	@docker-compose up -d
+	@docker-compose ps
+
+docker-down:
+	@echo "$(YELLOW)→ Stopping Docker containers...$(NC)"
+	@docker-compose down
+
+docker-logs:
+	@docker-compose logs -f
+
+docker-prod:
+	@echo "$(GREEN)→ Starting production environment...$(NC)"
+	@docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+backup:
+	@echo "$(GREEN)→ Creating backup...$(NC)"
+	@mkdir -p backups
+	@tar -czf backups/awesome-backup-$$(date +%Y%m%d_%H%M%S).tar.gz \
+		.awesome-phishing-bot/ \
+		awesome_reports/ \
+		monitoring/ \
+		alerts/ \
+		logs/
+	@echo "$(GREEN)✓ Backup created in backups/$(NC)"
+
+restore:
+	@echo "$(YELLOW)→ Restore from backup...$(NC)"
+	@ls -la backups/
+	@read -p "Enter backup filename: " file; \
+	if [ -f "backups/$$file" ]; then \
+		tar -xzf backups/$$file; \
+		echo "$(GREEN)✓ Restored from $$file$(NC)"; \
+	else \
+		echo "$(RED)✗ Backup file not found$(NC)"; \
+	fi
+
+clean:
+	@echo "$(YELLOW)→ Cleaning temporary files...$(NC)"
+	@rm -rf temp/*
+	@rm -rf __pycache__
+	@rm -rf .pytest_cache
+	@rm -rf *.pyc
+	@rm -rf logs/*.log.*
+	@echo "$(GREEN)✓ Cleanup complete$(NC)"
+
+test:
+	@echo "$(GREEN)→ Running tests...$(NC)"
+	@source venv/bin/activate && python -c "import awesome_phishing_bot; print('Module loaded successfully')"
+	@echo "$(GREEN)✓ Tests passed$(NC)"
+
+logs:
+	@tail -f logs/awesome.log
+
+monitor:
+	@watch -n 2 'ps aux | grep awesome-phishing-bot | grep -v grep'
