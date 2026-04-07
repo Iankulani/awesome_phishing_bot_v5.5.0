@@ -1,0 +1,59 @@
+# docker-compose.prod.yml - Production override
+
+version: '3.8'
+
+services:
+  awesome-phishing-bot:
+    restart: always
+    environment:
+      - TZ=UTC
+      - DEBUG=false
+      - LOG_LEVEL=WARNING
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - awesome-network
+      - nginx-proxy
+
+  # Nginx reverse proxy for HTTPS
+  nginx:
+    image: nginx:alpine
+    container_name: awesome-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/html:/usr/share/nginx/html
+    depends_on:
+      - awesome-phishing-bot
+    networks:
+      - awesome-network
+
+  # Certbot for SSL certificates
+  certbot:
+    image: certbot/certbot
+    container_name: awesome-certbot
+    volumes:
+      - ./nginx/ssl:/etc/letsencrypt
+      - ./nginx/html:/var/www/html
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  awesome-network:
+    driver: bridge
+  nginx-proxy:
+    external: true
