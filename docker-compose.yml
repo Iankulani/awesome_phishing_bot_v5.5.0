@@ -1,0 +1,71 @@
+# docker-compose.yml for AWESOME-PHISHING-BOT v5.5.0
+
+version: '3.8'
+
+services:
+  awesome-phishing-bot:
+    build: .
+    container_name: awesome-phishing-bot
+    restart: unless-stopped
+    ports:
+      - "8080:8080"    # Phishing server
+      - "5000:5000"    # Flask web interface
+      - "8022:22"      # SSH (optional)
+    volumes:
+      - ./data:/app/.awesome-phishing-bot
+      - ./reports:/app/awesome_reports
+      - ./backups:/app/backups
+      - ./monitoring:/app/monitoring
+      - ./alerts:/app/alerts
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Optional for container monitoring
+    environment:
+      - TZ=UTC
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=:99  # For headless browser
+    networks:
+      - awesome-network
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    stdin_open: true
+    tty: true
+
+  # Optional: Redis for session management
+  redis:
+    image: redis:7-alpine
+    container_name: awesome-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - awesome-network
+
+  # Optional: PostgreSQL for production database
+  postgres:
+    image: postgres:15-alpine
+    container_name: awesome-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=awesome_phishing
+      - POSTGRES_USER=awesome
+      - POSTGRES_PASSWORD=awesome_secure_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - awesome-network
+
+volumes:
+  redis-data:
+  postgres-data:
+
+networks:
+  awesome-network:
+    driver: bridge
