@@ -1,0 +1,84 @@
+# Dockerfile for AWESOME-PHISHING-BOT v5.5.0
+# Multi-stage build for optimal size and security
+
+FROM python:3.11-slim as builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    make \
+    libffi-dev \
+    libssl-dev \
+    libpcap-dev \
+    tcpdump \
+    net-tools \
+    iputils-ping \
+    dnsutils \
+    nmap \
+    whois \
+    curl \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Final stage
+FROM python:3.11-slim
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpcap0.8 \
+    tcpdump \
+    net-tools \
+    iputils-ping \
+    dnsutils \
+    nmap \
+    whois \
+    curl \
+    procps \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN useradd -m -s /bin/bash awesome && \
+    mkdir -p /app /app/data && \
+    chown -R awesome:awesome /app
+
+# Copy Python packages from builder
+COPY --from=builder --chown=awesome:awesome /root/.local /home/awesome/.local
+
+# Copy application
+COPY --chown=awesome:awesome awesome-phishing-bot.py /app/
+
+# Set environment variables
+ENV PATH="/home/awesome/.local/bin:${PATH}" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    CHROME_BIN=/usr/bin/chromium \
+    CHROMEDRIVER_PATH=/usr/bin/chromedriver
+
+WORKDIR /app
+
+# Switch to non-root user
+USER awesome
+
+# Create necessary directories
+RUN mkdir -p .awesome-phishing-bot awesome_reports backups monitoring alerts scripts
+
+# Expose ports
+EXPOSE 8080 5000 22
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import socket; s=socket.socket(); s.connect(('localhost', 8080))" || exit 1
+
+# Entry point
+ENTRYPOINT ["python", "awesome-phishing-bot.py"]
