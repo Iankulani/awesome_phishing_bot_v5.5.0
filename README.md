@@ -1,5 +1,11 @@
 # awesome_phishing_bot_v5.5.0
+
+<img width="653" height="624" alt="phishing2" src="https://github.com/user-attachments/assets/eeeaba5f-1f4c-4ff7-84f5-4083e1dc96b2" />
+
+
+
 awesome_phishing_bot
+
 
 
 # How to clone the repo
