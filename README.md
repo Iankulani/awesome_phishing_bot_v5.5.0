@@ -30,11 +30,11 @@ Cross-platform orchestration – Launch a single campaign that spans all six mes
 
 # Use Cases
 
-Red Team operations: Simulate compromised helpdesk accounts that phish via real chat platforms.
+* Red Team operations: Simulate compromised helpdesk accounts that phish via real chat platforms.
 
-Security awareness training: Run unannounced drills on iMessage and WhatsApp—channels often overlooked by traditional simulations.
+* Security awareness training: Run unannounced drills on iMessage and WhatsApp—channels often overlooked by traditional simulations.
 
-Incident response validation: Test if your team detects and reports a Discord-based credential harvester.
+* Incident response validation: Test if your team detects and reports a Discord-based credential harvester.
 
 # Getting Started
 
