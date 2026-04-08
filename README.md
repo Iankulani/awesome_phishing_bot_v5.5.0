@@ -6,18 +6,20 @@ Awesome Phishing Bot is an enterprise-grade, cross-platform social engineering s
 Core Capabilities
 Once enabled on any of the six supported messaging platforms, Awesome Phishing Bot transforms into a realistic adversary emulation engine. It generates fully interactive, clone-quality login pages for over 120 brands (Microsoft 365, Google, Apple iCloud, Slack, Discord, WhatsApp Web, and banking portals). The bot captures credentials, multi-factor authentication (MFA) tokens, geolocation, user-agent strings, and even screenshot evidence—all in real time.
 
-Platform-Specific Enablement
-Telegram: Deploy via /deploy command. The bot creates disposable campaign links, tracks clicks, and reports metrics directly in your private channel.
+# Platform-Specific Enablement
 
-Discord: Use slash commands (/phish launch) to spin up a campaign. Supports role-based targeting and hidden audit logging for server admins.
+* Telegram: Deploy via /deploy command. The bot creates disposable campaign links, tracks clicks, and reports metrics directly in your private channel.
 
-WhatsApp: Enable via WhatsApp Business API. Send personalized, conversational phishing simulations that mimic customer support or IT helpdesk messages.
+* Discord: Use slash commands (/phish launch) to spin up a campaign. Supports role-based targeting and hidden audit logging for server admins.
 
-Slack: Authorize the bot via OAuth. Launch internal phishing tests against channels or direct messages, including fake "Okta verification" or "HR document request" templates.
+* WhatsApp: Enable via WhatsApp Business API. Send personalized, conversational phishing simulations that mimic customer support or IT helpdesk messages.
 
-iMessage: Enable via a macOS bridge or iMessage relay. Target Apple users with iCloud credential harvesters and "Apple ID suspended" alerts.
+* Slack: Authorize the bot via OAuth. Launch internal phishing tests against channels or direct messages, including fake "Okta verification" or "HR document request" templates.
 
-Why Awesome Phishing Bot Stands Out
+* iMessage: Enable via a macOS bridge or iMessage relay. Target Apple users with iCloud credential harvesters and "Apple ID suspended" alerts.
+
+# Why Awesome Phishing Bot Stands Out
+
 Real-time analytics dashboard – Every interaction is logged: who clicked, when, from which IP, on which device, and whether they submitted credentials. The bot automatically scores user risk and schedules remedial training for repeat fails.
 
 Zero infrastructure setup – No SMTP servers, no domain warm-up, no email gateways. The bot handles TLS certificates, URL shortening, and anti-filter evasion (including CAPTCHA pass-through and browser fingerprint spoofing).
@@ -38,13 +40,13 @@ Incident response validation: Test if your team detects and reports a Discord-ba
 
 Enable Awesome Phishing Bot in under 2 minutes:
 
-Add the bot to your preferred platform (Telegram, Discord, Slack, WhatsApp Business, or iMessage relay).
+* Add the bot to your preferred platform (Telegram, Discord, Slack, WhatsApp Business, or iMessage relay).
 
-Run /setup to define your campaign scope.
+* Run /setup to define your campaign scope.
 
-Choose a template or upload a custom HTML landing page.
+* Choose a template or upload a custom HTML landing page.
 
-Execute /phish start and watch real-time results stream into your command channel.
+* Execute /phish start and watch real-time results stream into your command channel.
 
 
 # How to clone the repo
