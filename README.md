@@ -38,7 +38,7 @@ Cross-platform orchestration – Launch a single campaign that spans all six mes
 
 # Getting Started
 
-Enable Awesome Phishing Bot in under 2 minutes:
+* Enable Awesome Phishing Bot in under 2 minutes:
 
 * Add the bot to your preferred platform (Telegram, Discord, Slack, WhatsApp Business, or iMessage relay).
 
