@@ -64,5 +64,5 @@ python awesome_phishing_bot.py
  
 Disclaimer: For authorized security testing and educational use only. The bot includes mandatory banner warnings on all phishing pages. Unauthorized deployment violates platform terms of service and may be illegal.
 
-Awesome Phishing Bot – Because modern phishing doesn't happen in email inboxes. It happens in chat. Be ready.
+# Awesome Phishing Bot – Because modern phishing doesn't happen in email inboxes. It happens in chat. Be ready.
 
